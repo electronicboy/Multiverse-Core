@@ -27,9 +27,27 @@ import java.util.logging.Level;
 public class MVPortalListener implements Listener {
 
     private MultiverseCore plugin;
+    private static Material END_PORTAL_FRAME;
+
+    private static Material getPortalFrameMaterial() {
+        if (END_PORTAL_FRAME != null) {
+            return END_PORTAL_FRAME;
+        }
+        Material portalFrame = null;
+        try {
+            portalFrame = Material.valueOf("END_PORTAL_FRAME");
+        } catch (IllegalArgumentException ignored) {
+            portalFrame = Material.valueOf("ENDER_PORTAL_FRAME");
+        }
+        END_PORTAL_FRAME = portalFrame;
+        return END_PORTAL_FRAME;
+    }
 
     public MVPortalListener(MultiverseCore core) {
         this.plugin = core;
+        if (getPortalFrameMaterial() == null) {
+            throw new RuntimeException("Failed to find End portal frame material");
+        }
     }
 
     /**
@@ -72,7 +90,7 @@ public class MVPortalListener implements Listener {
         if (event.getAction() != Action.RIGHT_CLICK_BLOCK) {
             return;
         }
-        if (event.getClickedBlock().getType() != Material.END_PORTAL_FRAME) {
+        if (event.getClickedBlock().getType() != getPortalFrameMaterial()) {
             return;
         }
         if (event.getItem() == null || event.getItem().getType() != Material.ENDER_EYE) {
